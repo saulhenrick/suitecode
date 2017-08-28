@@ -11,14 +11,21 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onCommand:extension.setupProject"
     ],
     "main": "./extension",
     "contributes": {
         "commands": [{
-            "command": "extension.sayHello",
-            "title": "Hello World"
-        }]
+            "command": "extension.setupProject",
+            "title": "SuiteCode: Setup"
+        }],
+        "configuration": {
+            "properties": {
+                "suitecode.credentials": {
+                    "type": "object"
+                }
+            }
+        }
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
