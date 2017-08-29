@@ -21,7 +21,7 @@
         }],
         "configuration": {
             "properties": {
-                "suitecode.credentials": {
+                "suitecode.passport": {
                     "type": "object"
                 }
             }
