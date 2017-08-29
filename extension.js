@@ -23,7 +23,7 @@ function activate(context) {
         // var credentials = {
         //     "email": '',
         //     "password": ''
-        // };       
+        // };
 
         // askEmail(credentials);
 
@@ -72,7 +72,7 @@ exports.activate = activate;
 
 /**
  * Show email InputBox
- * 
+ *
  * @param {Object} credentials JSON Object containing credentials
  */
 function askEmail(credentials) {
@@ -83,14 +83,14 @@ function askEmail(credentials) {
     }).then(val => {
         credentials.email = val;
         askPassword(credentials);
-    });    
+    });
 
 }
 
 
 /**
  * Show password InputBox
- * 
+ *
  * @param {Object} credentials JSON Object containing credentials
  */
 function askPassword(credentials) {
@@ -104,7 +104,7 @@ function askPassword(credentials) {
         var config = vscode.workspace.getConfiguration("suitecode", ".");
         config.update("email", credentials.email, vscode.ConfigurationTarget.WorkspaceFolder);
         // console.log(config);
-    }); 
+    });
 
 }
 
