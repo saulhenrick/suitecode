@@ -10,9 +10,7 @@ var credentials = {
         "applicationId": "736CE7E6-C280-47E3-B348-B2D689F61EB4"
     },
     "passport": {
-        "email": "ssantiago@netsuite.com",
-        "password": "4321.elcAro",
-        "account": "4343793"
+
     }
 };
 
