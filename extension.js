@@ -3,6 +3,8 @@
 var vscode = require('vscode');
 var soap = require('soap');
 var https = require('https');
+var fs = require('fs');
+var CircularJSON = require('circular-json');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -24,7 +26,7 @@ function activate(context) {
         const config = vscode.workspace.getConfiguration("suitecode");
         var credentials = {
             "email": config.get('email') || '',
-            "password": config.get('passowrd') || '',
+            "password": config.get('password') || '',
             "account": config.get('account') || '',
             "fileCabinetDir": config.get('fileCabinetDir') || '',
             "applicationInfo": {
@@ -59,7 +61,7 @@ function activate(context) {
                     response.on('data', function (chunk) {
                         str += chunk;
                     });
-            
+
                     response.on('end', function () {
                         var accounts = JSON.parse(str);
                         // console.log('accounts', accounts);
@@ -81,40 +83,11 @@ function activate(context) {
                             credentials.account = val.label;
                             config.update("passport", credentials);
 
-                            soap.createClient(wsdlURL, function(err, client) {
-                                
-                                if (err) {
-                                    throw err;
-                                }
-
-                                console.log(client.describe());
-
-                                client.addSoapHeader({
-                                    "applicationInfo": credentials.applicationInfo
-                                });
-                                client.login({
-                                    "passport": {
-                                        "email": credentials.email,
-                                        "password": credentials.password,
-                                        "account": credentials.account
-                                    }
-                                }, function(err2, result) {
-                                    console.log('err2', err2);
-
-                                    client.search({
-                                        "folderSearch": "Bundle"
-                                    }, function(err3, result) {
-                                        console.log('err3', err3);
-                                        console.log('result', result);
-                                    });
-
-                                });
-                            });
-
+                            startSOAP(wsdlURL, credentials);
 
 
                         });
-                        
+
                     });
                 });
                 req.end();
@@ -122,9 +95,9 @@ function activate(context) {
 
             });
 
-            
+
         });
-        
+
 
 
 
@@ -192,7 +165,7 @@ exports.activate = activate;
 
 /**
  * Get list of NetSuite accounts by email
- * 
+ *
  * @param {Object} passport The passport object
  */
 function getAccountList(passport) {
@@ -268,6 +241,64 @@ function setSettings(newSettings) {
         console.log(key, newSettings[key]);
         config.update(key, newSettings[key]);
     });
+}
+
+
+/**
+ * Create SOAP Client
+ *
+ * @param {String} wsdlURL
+ * @param {Object} credentials
+ */
+function startSOAP(wsdlURL, credentials) {
+
+    soap.createClient(wsdlURL, function (err, client) {
+
+        if (err) {
+            throw err;
+        }
+
+        console.log(client.describe());
+
+        client.addSoapHeader({
+            "applicationInfo": credentials.applicationInfo
+        });
+        client.login({
+            "passport": {
+                "email": credentials.email,
+                "password": credentials.password,
+                "account": credentials.account
+            }
+        }, function (err2, result) {
+            console.log('err2', err2);
+            console.log(process.cwd());
+
+            client.search({
+                "searchRecord": {
+                    "attributes": {
+                        "type": "folderSearch"
+                    },
+                    "name": "Bundle"
+                }
+            }, function (err3, result) {
+
+                fs.writeFile('2pac.txt', client.lastRequest, (err) => {
+                    // throws an error, you could also catch it here
+                    if (err) throw err;
+
+                    // success case, the file was saved
+                    console.log('Lyric saved!');
+                });
+
+                console.log('err3', err3);
+                console.log('result', result);
+            });
+
+
+
+        });
+    });
+
 }
 
 
